@@ -1,50 +1,87 @@
 #include <SoftwareSerial.h>
 
+//bluetooth I/O pins
 const int RxD = 2;
 const int TxD = 3;
-const int gLED = 10;
-const int yLED = 9;
-const int bLED = 8;
-const int rLED = 7;
-char stuff;
+SoftwareSerial bluetooth(RxD,TxD);
 
-SoftwareSerial mySerial(RxD,TxD);
+String btString = "";
+
+//motor1 control - left motor
+const int motorSpeedLFT = 11;
+const int motorControlPin_1_LFT = 9;
+const int motorControlPin_2_LFT = 10;
+const int ledLFT = 12;
+int motorValueLFT = 0;
+boolean motorPowerLFT = false;
+
+//motor2 control - right motor
+//const int motorSpeedRGT = ;
+//const int motorControlPin_1_RGT = ;
+//const int motorControlPin_2_RGT = ;
+//const int ledRGT = 13;
+//int motorValueRGT = 0;
+//int motorPowerRGT = 0;
+
+//bluetooth serial
+
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(RxD, INPUT); 
   pinMode(TxD, OUTPUT);
-  pinMode(gLED, OUTPUT);
-  pinMode(yLED, OUTPUT);
-  pinMode(bLED, OUTPUT);
-  pinMode(rLED, OUTPUT);
   
-  mySerial.begin(9600);
+  pinMode(motorSpeedLFT, OUTPUT);
+  pinMode(motorControlPin_1_LFT, OUTPUT);
+  pinMode(motorControlPin_2_LFT, OUTPUT);
+  pinMode(ledLFT, OUTPUT);
+  
+  digitalWrite(motorSpeedLFT,LOW); //make sure motor off to start;
+  digitalWrite(motorControlPin_1_LFT,LOW);
+  digitalWrite(motorControlPin_2_LFT,HIGH);
+
+//  pinMode(motorSpeedRGT, OUTPUT);
+//  pinMode(motorControlPin_1_RGT, OUTPUT);
+//  pinMode(motorControlPin_2_RGT, OUTPUT);
+//  pinMode(ledRGT, OUTPUT);
+
+  //bluetooth serial
+  bluetooth.begin(9600);
+  //usb serial
   Serial.begin(9600);
 }
 
 void loop() {
- 
-  if(mySerial.available()) 
-  { 
-     stuff = mySerial.read();
-     Serial.print(stuff);
-     if(stuff == 'A'){
-      digitalWrite(gLED,HIGH);
-     }
-     if(stuff == 'B'){
-      digitalWrite(yLED,HIGH);
-     }
-     if(stuff == 'C'){
-      digitalWrite(bLED,HIGH);
-     }
-     if(stuff == 'D'){
-      digitalWrite(rLED,HIGH);
+  while (bluetooth.available() > 0) 
+  {
+     char btReceived = bluetooth.read();
+     btString += btReceived; //convert to string
+     
+     if(btReceived == '\n'){
+       //do stuff with bt value
+       
+       if(btString == "A\n"){
+        motorPowerLFT = !motorPowerLFT; // toggle value
+        Serial.print(motorPowerLFT ? "On" : "Off");
+       }
+       
+       if(btString.endsWith("mp\n")){
+        //its motor power
+//        motorValueLFT = btString.toInt();
+        Serial.print(btString);
+       }
+       btString = ""; //reset to empty string
      }
   }
-  delay(1000);
-  digitalWrite(gLED,LOW);
-  digitalWrite(yLED,LOW);
-  digitalWrite(bLED,LOW);
-  digitalWrite(rLED,LOW);
+
+  if(motorPowerLFT){
+//    Serial.println("Do Stuff");
+    digitalWrite(ledLFT,HIGH);
+    //TODO - get values from slider
+    digitalWrite(motorSpeedLFT,HIGH);
+  }else{
+//    Serial.println("Dont Do Stuff");
+    digitalWrite(ledLFT,LOW);
+    analogWrite(motorSpeedLFT,0);
+  }
 }
