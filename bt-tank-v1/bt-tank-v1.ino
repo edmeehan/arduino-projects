@@ -14,6 +14,7 @@ const int motorControlPin_2_LFT = 10;
 const int ledLFT = 12;
 int motorValueLFT = 0;
 boolean motorPowerLFT = false;
+boolean motorDirectionLFT = false;
 
 //motor2 control - right motor
 //const int motorSpeedRGT = ;
@@ -64,23 +65,34 @@ void loop() {
         motorPowerLFT = !motorPowerLFT; // toggle value
         Serial.print(motorPowerLFT ? "On" : "Off");
        }
+
+       if(btString == "B\n"){
+        motorDirectionLFT = !motorDirectionLFT; // toggle value
+        Serial.print(motorDirectionLFT ? "Forward" : "Backwards");
+       }
        
        if(btString.endsWith("mp\n")){
         //its motor power
-//        motorValueLFT = btString.toInt();
-        Serial.print(btString);
+        motorValueLFT = btString.toInt();
+        Serial.print(motorValueLFT);
        }
+       
        btString = ""; //reset to empty string
      }
   }
 
-  if(motorPowerLFT){
-//    Serial.println("Do Stuff");
-    digitalWrite(ledLFT,HIGH);
-    //TODO - get values from slider
-    digitalWrite(motorSpeedLFT,HIGH);
+  if(motorDirectionLFT){
+    digitalWrite(motorControlPin_1_LFT, HIGH);
+    digitalWrite(motorControlPin_2_LFT, LOW);
   }else{
-//    Serial.println("Dont Do Stuff");
+    digitalWrite(motorControlPin_1_LFT, LOW);
+    digitalWrite(motorControlPin_2_LFT, HIGH);
+  }
+
+  if(motorPowerLFT){
+    digitalWrite(ledLFT,HIGH);
+    analogWrite(motorSpeedLFT,motorValueLFT);
+  }else{
     digitalWrite(ledLFT,LOW);
     analogWrite(motorSpeedLFT,0);
   }
