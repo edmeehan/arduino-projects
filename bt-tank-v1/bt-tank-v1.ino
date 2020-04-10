@@ -49,7 +49,7 @@ void setup() {
   //bluetooth serial
   bluetooth.begin(9600);
   //usb serial
-  Serial.begin(9600);
+  //Serial.begin(9600);
 }
 
 void loop() {
@@ -63,18 +63,18 @@ void loop() {
        
        if(btString == "A\n"){
         motorPowerLFT = !motorPowerLFT; // toggle value
-        Serial.print(motorPowerLFT ? "On" : "Off");
+        //Serial.print(motorPowerLFT ? "On" : "Off");
        }
 
        if(btString == "B\n"){
         motorDirectionLFT = !motorDirectionLFT; // toggle value
-        Serial.print(motorDirectionLFT ? "Forward" : "Backwards");
+        //Serial.print(motorDirectionLFT ? "Forward" : "Backwards");
        }
        
        if(btString.endsWith("mp\n")){
         //its motor power
         motorValueLFT = btString.toInt();
-        Serial.print(motorValueLFT);
+        //Serial.print(motorValueLFT);
        }
        
        btString = ""; //reset to empty string
