@@ -1,0 +1,12 @@
+{
+  "name": "johnny-five-v1",
+  "version": "1.0.0",
+  "description": "first johnny five test run",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Edward Meehan",
+  "license": "ISC",
+  "dependencies": {
+    "johnny-five": "^1.4.0"
+  }
+}
